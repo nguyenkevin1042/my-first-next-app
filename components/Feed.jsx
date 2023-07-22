@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import PromptCard from './PromptCard'
+import { useSearchParams } from 'next/navigation'
 
 const PromptCardList = ({ data, handleTagClick }) => {
     return (
@@ -17,12 +18,25 @@ const PromptCardList = ({ data, handleTagClick }) => {
     )
 }
 const Feed = () => {
+    const searchParams = useSearchParams();
+    const searchQuery = searchParams.get('searchQuery');
     const [searchText, setSearchText] = useState("")
     const [posts, setPosts] = useState([])
-    const [isLoading, setIsLoading] = useState(false)
+    const [isSearching, setIsSearching] = useState(false)
 
     const handleSearchChange = (e) => {
+        setSearchText(e.target.value)
+    }
 
+    const handleDoSearching = async (e) => {
+        e.preventDefault()
+
+    }
+
+    const handleSearchByTag = (event, selectedTag) => {
+        setSearchText(selectedTag)
+        setIsSearching(true)
+        // handleDoSearching(event)
     }
 
     useEffect(() => {
@@ -37,18 +51,24 @@ const Feed = () => {
 
     return (
         <section className='feed'>
-            <form className='relative w-full flex-center'>
+            <form className='relative w-full flex-center'
+                onSubmit={handleDoSearching}>
                 <input type='text'
-                    placeholder='Search for a tag or username'
+                    placeholder='Search for a tag or a username'
                     value={searchText}
                     onChange={handleSearchChange}
                     className='search_input peer'
                     required />
+                {/* <button type='submit'
+                    className='absolute right-2 px-5 py-1.5 text-sm bg-primary-orange
+                    rounded text-white peer'>
+                    Search
+                </button> */}
             </form>
 
             <PromptCardList
                 data={posts}
-                handleTagClick={() => { }} />
+                handleTagClick={handleSearchByTag} />
 
         </section>
     )
