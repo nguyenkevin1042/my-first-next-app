@@ -8,6 +8,8 @@ import Profile from '@components/Profile'
 
 const MyProfile = () => {
     const { data: session } = useSession();
+    const userId = session?.user.id
+
     const searchParams = useSearchParams();
     const creatorId = searchParams.get('creatorId');
     const router = useRouter()
@@ -19,7 +21,6 @@ const MyProfile = () => {
     })
 
     useEffect(() => {
-        const userId = session?.user.id
         const fetchPosts = async () => {
             //fetch when in other's profile
             if (creatorId) {
@@ -28,7 +29,7 @@ const MyProfile = () => {
                 const username = data[0].creator.username
                 setPosts(data)
                 setProfile({
-                    name: `${username}'s`,
+                    name: `${username}'s Profile`,
                     desc: `Welcome to ${username}'s profile page`
                 })
                 return;
@@ -40,7 +41,7 @@ const MyProfile = () => {
             const data = await res.json()
             setPosts(data)
             setProfile({
-                name: 'My',
+                name: 'My Profile',
                 desc: 'Welcome to your personalized profile page'
             })
         }
@@ -48,7 +49,7 @@ const MyProfile = () => {
         if (userId || creatorId) {
             fetchPosts()
         }
-    }, [creatorId])
+    }, [userId, creatorId])
 
     const handleEdit = (post) => {
         router.push(`/update-prompt?id=${post._id}`)
@@ -73,7 +74,6 @@ const MyProfile = () => {
                 console.log('deletePrompt error: ', error)
             }
         }
-
     }
 
     return (
